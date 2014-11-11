@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>Telerivet.NET</id>
+        <version>1.1.1</version>
+        <authors>youngj</authors>
+        <projectUrl>https://telerivet.com/api</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>.NET library for Telerivet REST API.</description>
+        <tags>SMS</tags>
+        <dependencies>
+            <dependency id="Newtonsoft.Json" version="6.0.6" />
+        </dependencies>
+    </metadata>
+    <files />
+</package>
