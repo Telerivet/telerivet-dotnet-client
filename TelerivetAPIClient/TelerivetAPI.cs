@@ -13,7 +13,7 @@ namespace Telerivet.Client
 
 public class TelerivetAPI
 {
-    public static String ClientVersion = "1.0.2";
+    public static String ClientVersion = "1.1.2";
 
     private int numRequests = 0;
 
@@ -143,6 +143,7 @@ public class TelerivetAPI
 
             byte[] apiKeyBytes = Encoding.UTF8.GetBytes(apiKey + ":");
 
+            httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Telerivet .NET Client/" + ClientVersion + " .NET/" + Environment.Version);
             httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", "Basic " + Convert.ToBase64String(apiKeyBytes));
         }
 

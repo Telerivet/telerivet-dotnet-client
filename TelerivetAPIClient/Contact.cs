@@ -193,10 +193,10 @@ public class Contact : Entity
       }
     }
 
-    public long LastMessageTime
+    public long? LastMessageTime
     {
       get {
-          return (long) Get("last_message_time");
+          return (long?) Get("last_message_time");
       }
     }
 

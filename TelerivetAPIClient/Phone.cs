@@ -158,10 +158,10 @@ public class Phone : Entity
       }
     }
 
-    public long LastActiveTime
+    public long? LastActiveTime
     {
       get {
-          return (long) Get("last_active_time");
+          return (long?) Get("last_active_time");
       }
     }
 
@@ -172,17 +172,17 @@ public class Phone : Entity
       }
     }
 
-    public int Battery
+    public int? Battery
     {
       get {
-          return (int) Get("battery");
+          return (int?) Get("battery");
       }
     }
 
-    public bool Charging
+    public bool? Charging
     {
       get {
-          return (bool) Get("charging");
+          return (bool?) Get("charging");
       }
     }
 
@@ -193,10 +193,10 @@ public class Phone : Entity
       }
     }
 
-    public int AndroidSdk
+    public int? AndroidSdk
     {
       get {
-          return (int) Get("android_sdk");
+          return (int?) Get("android_sdk");
       }
     }
 
@@ -221,10 +221,10 @@ public class Phone : Entity
       }
     }
 
-    public int SendLimit
+    public int? SendLimit
     {
       get {
-          return (int) Get("send_limit");
+          return (int?) Get("send_limit");
       }
     }
 

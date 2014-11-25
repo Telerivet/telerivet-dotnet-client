@@ -192,24 +192,24 @@ public class ScheduledMessage : Entity
       }
     }
 
-    public long EndTime
+    public long? EndTime
     {
       get {
-          return (long) Get("end_time");
+          return (long?) Get("end_time");
       }
     }
 
-    public long PrevTime
+    public long? PrevTime
     {
       get {
-          return (long) Get("prev_time");
+          return (long?) Get("prev_time");
       }
     }
 
-    public long NextTime
+    public long? NextTime
     {
       get {
-          return (long) Get("next_time");
+          return (long?) Get("next_time");
       }
     }
 

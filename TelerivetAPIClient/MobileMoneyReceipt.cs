@@ -145,24 +145,24 @@ public class MobileMoneyReceipt : Entity
       }
     }
 
-    public double Amount
+    public double? Amount
     {
       get {
-          return (double) Get("amount");
+          return (double?) Get("amount");
       }
     }
 
-    public double Balance
+    public double? Balance
     {
       get {
-          return (double) Get("balance");
+          return (double?) Get("balance");
       }
     }
 
-    public double Fee
+    public double? Fee
     {
       get {
-          return (double) Get("fee");
+          return (double?) Get("fee");
       }
     }
 

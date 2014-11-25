@@ -205,6 +205,16 @@ public class Message : Entity
     }
 
     /**
+        Cancels sending a message that has not yet been sent. Returns the updated message object.
+        Only valid for outgoing messages that are currently in the queued, retrying, or cancelled
+        states. For other messages, the API will return an error with the code 'not_cancellable'.
+    */
+    public async Task<Message> CancelAsync()
+    {
+        return new Message(api, (JObject) await api.DoRequestAsync("POST", GetBaseApiPath() + "/cancel"));
+    }
+
+    /**
         Deletes this message.
     */
     public async Task DeleteAsync()
@@ -254,10 +264,10 @@ public class Message : Entity
       }
     }
 
-    public long TimeSent
+    public long? TimeSent
     {
       get {
-          return (long) Get("time_sent");
+          return (long?) Get("time_sent");
       }
     }
 
@@ -323,10 +333,10 @@ public class Message : Entity
       }
     }
 
-    public double Price
+    public double? Price
     {
       get {
-          return (double) Get("price");
+          return (double?) Get("price");
       }
     }
 
