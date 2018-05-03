@@ -27,14 +27,38 @@ namespace Telerivet.Client
           * Time the contact was added in Telerivet
           * Read-only
       
+      - send_blocked (bool)
+          * True if Telerivet is blocked from sending messages to this contact
+          * Updatable via API
+      
       - last_message_time (UNIX timestamp)
           * Last time the contact sent or received a message (null if no messages have been sent
               or received)
           * Read-only
       
+      - last_incoming_message_time (UNIX timestamp)
+          * Last time a message was received from this contact
+          * Read-only
+      
+      - last_outgoing_message_time (UNIX timestamp)
+          * Last time a message was sent to this contact
+          * Read-only
+      
+      - message_count (int)
+          * Total number of non-deleted messages sent to or received from this contact
+          * Read-only
+      
+      - incoming_message_count (int)
+          * Number of messages received from this contact
+          * Read-only
+      
+      - outgoing_message_count (int)
+          * Number of messages sent to this contact
+          * Read-only
+      
       - last_message_id
-          * ID of the last message sent or received by this contact (null if no messages have
-              been sent or received)
+          * ID of the last message sent to or received from this contact (null if no messages
+              have been sent or received)
           * Read-only
       
       - default_route_id
@@ -193,10 +217,55 @@ public class Contact : Entity
       }
     }
 
+    public bool SendBlocked
+    {
+      get {
+          return (bool) Get("send_blocked");
+      }
+      set {
+          Set("send_blocked", value);
+      }
+    }
+
     public long? LastMessageTime
     {
       get {
           return (long?) Get("last_message_time");
+      }
+    }
+
+    public long? LastIncomingMessageTime
+    {
+      get {
+          return (long?) Get("last_incoming_message_time");
+      }
+    }
+
+    public long? LastOutgoingMessageTime
+    {
+      get {
+          return (long?) Get("last_outgoing_message_time");
+      }
+    }
+
+    public int MessageCount
+    {
+      get {
+          return (int) Get("message_count");
+      }
+    }
+
+    public int IncomingMessageCount
+    {
+      get {
+          return (int) Get("incoming_message_count");
+      }
+    }
+
+    public int OutgoingMessageCount
+    {
+      get {
+          return (int) Get("outgoing_message_count");
       }
     }
 
@@ -239,7 +308,7 @@ public class Contact : Entity
     public Contact(TelerivetAPI api, JObject data, bool isLoaded = true)
         : base(api, data, isLoaded)
     {
-    }   
+    }
 }
 
 }

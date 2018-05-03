@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
-        
+
 namespace Telerivet.Client
 {
 /**
@@ -37,6 +37,14 @@ namespace Telerivet.Client
       - vars (JObject)
           * Custom variables stored for this data row
           * Updatable via API
+      
+      - time_created (UNIX timestamp)
+          * The time this row was created in Telerivet
+          * Read-only
+      
+      - time_updated (UNIX timestamp)
+          * The time this row was last updated in Telerivet
+          * Read-only
       
       - table_id
           * ID of the table this data row belongs to
@@ -92,6 +100,20 @@ public class DataRow : Entity
       }
     }
 
+    public long TimeCreated
+    {
+      get {
+          return (long) Get("time_created");
+      }
+    }
+
+    public long TimeUpdated
+    {
+      get {
+          return (long) Get("time_updated");
+      }
+    }
+
     public String TableId
     {
       get {
@@ -114,7 +136,7 @@ public class DataRow : Entity
     public DataRow(TelerivetAPI api, JObject data, bool isLoaded = true)
         : base(api, data, isLoaded)
     {
-    }   
+    }
 }
 
 }

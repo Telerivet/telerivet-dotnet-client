@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
-        
+
 namespace Telerivet.Client
 {
 /**
@@ -33,6 +33,11 @@ namespace Telerivet.Client
           * 2-letter country code (ISO 3166-1 alpha-2) where phone is from
           * Read-only
       
+      - send_paused (bool)
+          * True if sending messages is currently paused, false if the phone can currently send
+              messages
+          * Updatable via API
+      
       - time_created (UNIX timestamp)
           * Time the phone was created in Telerivet
           * Read-only
@@ -57,6 +62,11 @@ namespace Telerivet.Client
       - charging (bool)
           * True if the phone is currently charging, false if it is running on battery, as of
               the last time it connected to Telerivet (only present for Android phones)
+          * Read-only
+      
+      - internet_type
+          * String describing the current type of internet connectivity for an Android phone,
+              for example WIFI or MOBILE (only present for Android phones)
           * Read-only
       
       - app_version
@@ -87,8 +97,8 @@ namespace Telerivet.Client
       
       - send_limit (int)
           * Maximum number of SMS messages per hour that can be sent by this Android phone. To
-              increase this limit, install additional SMS expansion packs in the Telerivet app.
-              (only present for Android phones)
+              increase this limit, install additional SMS expansion packs in the Telerivet Gateway
+              app. (only present for Android phones)
           * Read-only
 */
 
@@ -151,6 +161,16 @@ public class Phone : Entity
       }
     }
 
+    public bool SendPaused
+    {
+      get {
+          return (bool) Get("send_paused");
+      }
+      set {
+          Set("send_paused", value);
+      }
+    }
+
     public long TimeCreated
     {
       get {
@@ -183,6 +203,13 @@ public class Phone : Entity
     {
       get {
           return (bool?) Get("charging");
+      }
+    }
+
+    public String InternetType
+    {
+      get {
+          return (String) Get("internet_type");
       }
     }
 
@@ -236,7 +263,7 @@ public class Phone : Entity
     public Phone(TelerivetAPI api, JObject data, bool isLoaded = true)
         : base(api, data, isLoaded)
     {
-    }   
+    }
 }
 
 }

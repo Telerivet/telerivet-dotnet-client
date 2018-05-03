@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
-        
+
 namespace Telerivet.Client
 {
 /**
@@ -30,15 +30,23 @@ namespace Telerivet.Client
               <http://en.wikipedia.org/wiki/List_of_tz_database_time_zones>
           * Read-only
       
+      - url_slug
+          * Unique string used as a component of the project's URL in the Telerivet web app
+          * Read-only
+      
       - vars (JObject)
           * Custom variables stored for this project
           * Updatable via API
+      
+      - organization_id (string, max 34 characters)
+          * ID of the organization this project belongs to
+          * Read-only
 */
 
 public class Project : Entity
 {
     /**
-        Sends one message (SMS or USSD request).
+        Sends one message (SMS, voice call, or USSD request).
     */
     public async Task<Message> SendMessageAsync(JObject options)
     {
@@ -46,8 +54,8 @@ public class Project : Entity
     }
 
     /**
-        Sends an SMS message (optionally with mail-merge templates) to a group or a list of up to
-        500 phone numbers
+        Sends an SMS message (optionally with mail-merge templates) or voice call to a group or a
+        list of up to 500 phone numbers
     */
     public async Task<JObject> SendMessagesAsync(JObject options)
     {
@@ -55,8 +63,8 @@ public class Project : Entity
     }
 
     /**
-        Schedules an SMS message to a group or single contact. Note that Telerivet only sends
-        scheduled messages approximately once per minute, so it is not possible to control the exact
+        Schedules a message to a group or single contact. Note that Telerivet only sends scheduled
+        messages approximately once every 15 seconds, so it is not possible to control the exact
         second at which a scheduled message is sent.
     */
     public async Task<ScheduledMessage> ScheduleMessageAsync(JObject options)
@@ -65,21 +73,31 @@ public class Project : Entity
     }
 
     /**
+        Add an incoming message to Telerivet. Acts the same as if the message was received by a
+        phone. Also triggers any automated services that apply to the message.
+    */
+    public async Task<Message> ReceiveMessageAsync(JObject options)
+    {
+        return new Message(api, (JObject) await api.DoRequestAsync("POST", GetBaseApiPath() + "/messages/receive", options));
+    }
+
+    /**
         Retrieves OR creates and possibly updates a contact by name or phone number.
         
-        If a phone number is provided, Telerivet will search for an existing
-        contact with that phone number (including suffix matches to allow finding contacts with
-        phone numbers in a different format).
-        
-        If a phone number is not provided but a name is provided, Telerivet
-        will search for a contact with that exact name (case insensitive).
+        If a phone number is provided, by default, Telerivet will search for
+        an existing contact with that phone number (including suffix matches to allow finding
+        contacts with phone numbers in a different format). If a phone number is not provided but a
+        name is provided, Telerivet will search for a contact with that exact name (case
+        insensitive). This behavior can be modified by setting the `lookup_key` parameter to look up
+        a contact by another field, including a custom variable.
         
         If no existing contact is found, a new contact will be created.
         
         Then that contact will be updated with any parameters provided
-        (name, phone_number, and vars).
+        (`name`, `phone_number`, `vars`, `default_route_id`, `send_blocked`, `add_group_ids`,
+        `remove_group_ids`).
     */
-    public async Task<Contact> GetOrCreateContactAsync(JObject options)
+    public async Task<Contact> GetOrCreateContactAsync(JObject options = null)
     {
         return new Contact(api, (JObject) await api.DoRequestAsync("POST", GetBaseApiPath() + "/contacts", options));
     }
@@ -154,6 +172,30 @@ public class Project : Entity
     public Message InitMessageById(string id)
     {
         return new Message(api, Util.Options("project_id", Get("id"), "id", id), false);
+    }
+
+    /**
+        Queries broadcasts within the given project.
+    */
+    public APICursor<Broadcast> QueryBroadcasts(JObject options = null)
+    {
+        return api.NewCursor<Broadcast>(GetBaseApiPath() + "/broadcasts", options);
+    }
+
+    /**
+        Retrieves the broadcast with the given ID.
+    */
+    public async Task<Broadcast> GetBroadcastByIdAsync(string id)
+    {
+        return new Broadcast(api, (JObject) await api.DoRequestAsync("GET", GetBaseApiPath() + "/broadcasts/" + id));
+    }
+
+    /**
+        Initializes the Telerivet broadcast with the given ID without making an API request.
+    */
+    public Broadcast InitBroadcastById(string id)
+    {
+        return new Broadcast(api, Util.Options("project_id", Get("id"), "id", id), false);
     }
 
     /**
@@ -349,6 +391,16 @@ public class Project : Entity
     }
 
     /**
+        Returns an array of user accounts that have access to this project. Each item in the array
+        is an object containing `id`, `email`, and `name` properties. (The id corresponds to the
+        `user_id` property of the Message object.)
+    */
+    public async Task<JArray> GetUsersAsync()
+    {
+        return (JArray) await api.DoRequestAsync("GET", GetBaseApiPath() + "/users");
+    }
+
+    /**
         Saves any fields or custom variables that have changed for the project.
     */
     public override async Task SaveAsync()
@@ -380,6 +432,20 @@ public class Project : Entity
       }
     }
 
+    public String UrlSlug
+    {
+      get {
+          return (String) Get("url_slug");
+      }
+    }
+
+    public string OrganizationId
+    {
+      get {
+          return (string) Get("organization_id");
+      }
+    }
+
     public override string GetBaseApiPath()
     {
         return "/projects/" + Id + "";
@@ -388,7 +454,7 @@ public class Project : Entity
     public Project(TelerivetAPI api, JObject data, bool isLoaded = true)
         : base(api, data, isLoaded)
     {
-    }   
+    }
 }
 
 }

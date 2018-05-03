@@ -45,23 +45,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="APICursor.cs" />
-    <Compile Include="Util.cs" />
-    <Compile Include="Contact.cs" />
-    <Compile Include="ContactServiceState.cs" />
-    <Compile Include="DataRow.cs" />
-    <Compile Include="DataTable.cs" />
-    <Compile Include="Entity.cs" />
-    <Compile Include="Group.cs" />
-    <Compile Include="Label.cs" />
     <Compile Include="Message.cs" />
-    <Compile Include="MobileMoneyReceipt.cs" />
-    <Compile Include="Phone.cs" />
+    <Compile Include="Contact.cs" />
+    <Compile Include="Broadcast.cs" />
     <Compile Include="Project.cs" />
-    <Compile Include="Route.cs" />
+    <Compile Include="Label.cs" />
+    <Compile Include="Group.cs" />
+    <Compile Include="Phone.cs" />
+    <Compile Include="DataTable.cs" />
+    <Compile Include="DataRow.cs" />
     <Compile Include="ScheduledMessage.cs" />
     <Compile Include="Service.cs" />
-    <Compile Include="TelerivetAPI.cs" />
+    <Compile Include="ContactServiceState.cs" />
+    <Compile Include="Route.cs" />
+    <Compile Include="MobileMoneyReceipt.cs" />
+    <Compile Include="Organization.cs" />
+	<Compile Include="TelerivetAPI.cs" />
+	<Compile Include="Entity.cs" />
+	<Compile Include="Util.cs" />
+	<Compile Include="APICursor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -70,7 +72,7 @@
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
-        
+
 namespace Telerivet.Client
 {
 /**
@@ -21,8 +21,12 @@ namespace Telerivet.Client
           * Name of the group
           * Updatable via API
       
+      - dynamic (bool)
+          * Whether this is a dynamic or normal group
+          * Read-only
+      
       - num_members (int)
-          * Number of contacts in the group
+          * Number of contacts in the group (null if the group is dynamic)
           * Read-only
       
       - time_created (UNIX timestamp)
@@ -89,10 +93,17 @@ public class Group : Entity
       }
     }
 
-    public int NumMembers
+    public bool Dynamic
     {
       get {
-          return (int) Get("num_members");
+          return (bool) Get("dynamic");
+      }
+    }
+
+    public int? NumMembers
+    {
+      get {
+          return (int?) Get("num_members");
       }
     }
 
@@ -118,7 +129,7 @@ public class Group : Entity
     public Group(TelerivetAPI api, JObject data, bool isLoaded = true)
         : base(api, data, isLoaded)
     {
-    }   
+    }
 }
 
 }

@@ -67,7 +67,7 @@ namespace Telerivet.Client
           * Updatable via API
       
       - simulated (bool)
-          * Whether this message is was simulated within Telerivet for testing (and not actually
+          * Whether this message was simulated within Telerivet for testing (and not actually
               sent to or received by a real phone)
           * Read-only
       
@@ -90,11 +90,35 @@ namespace Telerivet.Client
           * Read-only
       
       - price (number)
-          * The price of this message, if known. By convention, message prices are negative.
+          * The price of this message, if known.
           * Read-only
       
       - price_currency
           * The currency of the message price, if applicable.
+          * Read-only
+      
+      - duration (number)
+          * The duration of the call in seconds, if known, or -1 if the call was not answered.
+          * Read-only
+      
+      - ring_time (number)
+          * The length of time the call rang in seconds before being answered or hung up, if
+              known.
+          * Read-only
+      
+      - audio_url
+          * For voice calls, the URL of an MP3 file to play when the contact answers the call
+          * Read-only
+      
+      - tts_lang
+          * For voice calls, the language of the text-to-speech voice
+          * Allowed values: en-US, en-GB, en-GB-WLS, en-AU, en-IN, da-DK, nl-NL, fr-FR, fr-CA,
+              de-DE, is-IS, it-IT, pl-PL, pt-BR, pt-PT, ru-RU, es-ES, es-US, sv-SE
+          * Read-only
+      
+      - tts_voice
+          * For voice calls, the text-to-speech voice
+          * Allowed values: female, male
           * Read-only
       
       - mms_parts (array)
@@ -106,12 +130,29 @@ namespace Telerivet.Client
               [getMMSParts](#Message.getMMSParts).
           * Read-only
       
+      - service_id (string, max 34 characters)
+          * ID of the service that handled the message (for voice calls, the service defines the
+              call flow)
+          * Read-only
+      
       - phone_id (string, max 34 characters)
           * ID of the phone that sent or received the message
           * Read-only
       
       - contact_id (string, max 34 characters)
           * ID of the contact that sent or received the message
+          * Read-only
+      
+      - route_id (string, max 34 characters)
+          * ID of the route that sent the message (if applicable)
+          * Read-only
+      
+      - broadcast_id (string, max 34 characters)
+          * ID of the broadcast that this message is part of (if applicable)
+          * Read-only
+      
+      - user_id (string, max 34 characters)
+          * ID of the Telerivet user who sent the message (if applicable)
           * Read-only
       
       - project_id
@@ -199,9 +240,9 @@ public class Message : Entity
         Telerivet will return the same message object. Otherwise, Telerivet will create and return a
         new message object.
     */
-    public async Task<Message> ResendAsync()
+    public async Task<Message> ResendAsync(JObject options = null)
     {
-        return new Message(api, (JObject) await api.DoRequestAsync("POST", GetBaseApiPath() + "/resend"));
+        return new Message(api, (JObject) await api.DoRequestAsync("POST", GetBaseApiPath() + "/resend", options));
     }
 
     /**
@@ -347,10 +388,52 @@ public class Message : Entity
       }
     }
 
+    public double? Duration
+    {
+      get {
+          return (double?) Get("duration");
+      }
+    }
+
+    public double? RingTime
+    {
+      get {
+          return (double?) Get("ring_time");
+      }
+    }
+
+    public String AudioUrl
+    {
+      get {
+          return (String) Get("audio_url");
+      }
+    }
+
+    public String TtsLang
+    {
+      get {
+          return (String) Get("tts_lang");
+      }
+    }
+
+    public String TtsVoice
+    {
+      get {
+          return (String) Get("tts_voice");
+      }
+    }
+
     public JArray MmsParts
     {
       get {
           return (JArray) Get("mms_parts");
+      }
+    }
+
+    public string ServiceId
+    {
+      get {
+          return (string) Get("service_id");
       }
     }
 
@@ -365,6 +448,27 @@ public class Message : Entity
     {
       get {
           return (string) Get("contact_id");
+      }
+    }
+
+    public string RouteId
+    {
+      get {
+          return (string) Get("route_id");
+      }
+    }
+
+    public string BroadcastId
+    {
+      get {
+          return (string) Get("broadcast_id");
+      }
+    }
+
+    public string UserId
+    {
+      get {
+          return (string) Get("user_id");
       }
     }
 
@@ -383,7 +487,7 @@ public class Message : Entity
     public Message(TelerivetAPI api, JObject data, bool isLoaded = true)
         : base(api, data, isLoaded)
     {
-    }   
+    }
 }
 
 }

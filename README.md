@@ -28,7 +28,7 @@ Installation
 ------------
 To install the library, run the following command in the Package Manager Console in Visual Studio:
 
-PM> Install-Package Telerivet.NET -Version 1.1.1
+PM> Install-Package Telerivet.NET -Version 1.3.3
 
 
 Example Usage
@@ -48,7 +48,7 @@ namespace ExampleNamespace
     public class ExampleClass
     {
         public async Task foo()
-        {               
+        {
             TelerivetAPI tr = new TelerivetAPI("YOUR_API_KEY");
             Project project = tr.InitProjectById("PROJECT_ID");
 
@@ -86,7 +86,7 @@ namespace ExampleNamespace
             foreach (Contact c in contacts)
             {
                 Console.WriteLine(c.Name + " " + c.PhoneNumber + " " + c.Vars.Get("birthdate"));
-            }    
+            }
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
-        
+
 namespace Telerivet.Client
 {
 /**
@@ -247,7 +247,7 @@ public class MobileMoneyReceipt : Entity
     public MobileMoneyReceipt(TelerivetAPI api, JObject data, bool isLoaded = true)
         : base(api, data, isLoaded)
     {
-    }   
+    }
 }
 
 }

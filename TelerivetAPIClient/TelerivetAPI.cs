@@ -13,7 +13,7 @@ namespace Telerivet.Client
 
 public class TelerivetAPI
 {
-    public static String ClientVersion = "1.1.2";
+    public static String ClientVersion = "1.3.3";
 
     private int numRequests = 0;
 
@@ -57,6 +57,30 @@ public class TelerivetAPI
     public APICursor<Project> QueryProjects(JObject options = null)
     {
         return this.NewCursor<Project>(GetBaseApiPath() + "/projects", options);
+    }
+
+    /**
+        Retrieves the Telerivet organization with the given ID.
+    */
+    public async Task<Organization> GetOrganizationByIdAsync(string id)
+    {
+        return new Organization(this, (JObject) await this.DoRequestAsync("GET", GetBaseApiPath() + "/organizations/" + id));
+    }
+
+    /**
+        Initializes the Telerivet organization with the given ID without making an API request.
+    */
+    public Organization InitOrganizationById(string id)
+    {
+        return new Organization(this, Util.Options("id", id), false);
+    }
+
+    /**
+        Queries organizations accessible to the current user account.
+    */
+    public APICursor<Organization> QueryOrganizations(JObject options = null)
+    {
+        return this.NewCursor<Organization>(GetBaseApiPath() + "/organizations", options);
     }
 
     public String GetBaseApiPath()

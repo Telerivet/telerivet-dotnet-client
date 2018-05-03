@@ -1,0 +1,5 @@
+packages/
+TelerivetAPIClient.*.suo
+TelerivetAPIClient/bin/
+TelerivetAPIClient/obj/
+TelerivetAPIClient/*.nupkg

@@ -5,14 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
-        
+
 namespace Telerivet.Client
 {
 /**
     Represents a custom data table that can store arbitrary rows.
     
-    For example, poll services use data tables to store a row for each
-    response.
+    For example, poll services use data tables to store a row for each response.
     
     DataTables are schemaless -- each row simply stores custom variables. Each
     variable name is equivalent to a different "column" of the data table.
@@ -152,7 +151,7 @@ public class DataTable : Entity
     public DataTable(TelerivetAPI api, JObject data, bool isLoaded = true)
         : base(api, data, isLoaded)
     {
-    }   
+    }
 }
 
 }
