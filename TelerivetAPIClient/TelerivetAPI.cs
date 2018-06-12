@@ -7,13 +7,16 @@ using System.Net.Http;
 using System.Web;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Net;
+using System.IO.Compression;
+using System.IO;
 
 namespace Telerivet.Client
 {
 
 public class TelerivetAPI
 {
-    public static String ClientVersion = "1.3.3";
+    public static String ClientVersion = "1.4.0";
 
     private int numRequests = 0;
 
@@ -87,7 +90,6 @@ public class TelerivetAPI
     {
         return "";
     }
-    
     public int NumRequests
     {
         get
@@ -120,7 +122,7 @@ public class TelerivetAPI
         else if (token is JObject)
         {
             JObject obj = (JObject)token;
-            
+
             foreach (KeyValuePair<string, JToken> kvp in obj)
             {
                 encodeParamsRec(paramName + "[" + kvp.Key+ "]", kvp.Value, paramArr);
@@ -153,7 +155,7 @@ public class TelerivetAPI
         }
         return String.Join("&", paramsList.ToArray());
     }
-        
+
     public APICursor<T> NewCursor<T>(String path, JObject options = null) where T : Entity
     {
         return new APICursor<T>(this, path, options);
@@ -163,12 +165,16 @@ public class TelerivetAPI
     {
         if (httpClient == null)
         {
-            httpClient = new HttpClient();
+            var handler = new HttpClientHandler();
+            handler.AutomaticDecompression = DecompressionMethods.GZip;
+
+            httpClient = new HttpClient(handler);
 
             byte[] apiKeyBytes = Encoding.UTF8.GetBytes(apiKey + ":");
 
             httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Telerivet .NET Client/" + ClientVersion + " .NET/" + Environment.Version);
             httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", "Basic " + Convert.ToBase64String(apiKeyBytes));
+            httpClient.DefaultRequestHeaders.ExpectContinue = false;
         }
 
         String requestUri = this.apiUrl + path;
@@ -179,7 +185,26 @@ public class TelerivetAPI
         if (method == "POST" || method == "PUT")
         {
             String json = JsonConvert.SerializeObject(parameters);
-            content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            if (json.Length >= 400)
+            {
+                byte[] jsonBytes = Encoding.UTF8.GetBytes(json);
+                using (var compressedStream = new MemoryStream())
+                {
+                    using (var gZipStream = new GZipStream(compressedStream, CompressionMode.Compress))
+                    {
+                        gZipStream.Write(jsonBytes, 0, jsonBytes.Length);
+                    }
+                    var gzipBytes = compressedStream.ToArray();
+                    content = new ByteArrayContent(gzipBytes);
+                    content.Headers.Add("Content-Type", "application/json; charset=utf-8");
+                    content.Headers.Add("Content-Encoding", "gzip");
+                }
+            }
+            else
+            {
+                content = new StringContent(json, Encoding.UTF8, "application/json");
+            }
         }
         else
         {

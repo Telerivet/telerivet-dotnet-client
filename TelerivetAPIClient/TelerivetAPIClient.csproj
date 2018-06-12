@@ -46,19 +46,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Message.cs" />
+    <Compile Include="ScheduledMessage.cs" />
     <Compile Include="Contact.cs" />
     <Compile Include="Broadcast.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="Label.cs" />
     <Compile Include="Group.cs" />
     <Compile Include="Phone.cs" />
+    <Compile Include="Route.cs" />
     <Compile Include="DataTable.cs" />
     <Compile Include="DataRow.cs" />
-    <Compile Include="ScheduledMessage.cs" />
     <Compile Include="Service.cs" />
     <Compile Include="ContactServiceState.cs" />
-    <Compile Include="Route.cs" />
-    <Compile Include="MobileMoneyReceipt.cs" />
     <Compile Include="Organization.cs" />
 	<Compile Include="TelerivetAPI.cs" />
 	<Compile Include="Entity.cs" />

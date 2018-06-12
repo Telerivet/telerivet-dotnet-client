@@ -54,8 +54,28 @@ public class Project : Entity
     }
 
     /**
-        Sends an SMS message (optionally with mail-merge templates) or voice call to a group or a
+        Sends a text message (optionally with mail-merge templates) or voice call to a group or a
         list of up to 500 phone numbers
+    */
+    public async Task<Broadcast> SendBroadcastAsync(JObject options)
+    {
+        return new Broadcast(api, (JObject) await api.DoRequestAsync("POST", GetBaseApiPath() + "/send_broadcast", options));
+    }
+
+    /**
+        Sends up to 100 different messages in a single API request. This method is significantly
+        faster than sending a separate API request for each message.
+    */
+    public async Task<JObject> SendMultiAsync(JObject options)
+    {
+        return (JObject) await api.DoRequestAsync("POST", GetBaseApiPath() + "/send_multi", options);
+    }
+
+    /**
+        (Deprecated) Send a message a to group or a list of phone numbers.
+        This method is only needed to maintain backward compatibility with
+        code developed using previous versions of the client library.
+        Use `sendBroadcast` or `sendMulti` instead.
     */
     public async Task<JObject> SendMessagesAsync(JObject options)
     {
@@ -340,30 +360,6 @@ public class Project : Entity
     public Service InitServiceById(string id)
     {
         return new Service(api, Util.Options("project_id", Get("id"), "id", id), false);
-    }
-
-    /**
-        Queries mobile money receipts within the given project.
-    */
-    public APICursor<MobileMoneyReceipt> QueryReceipts(JObject options = null)
-    {
-        return api.NewCursor<MobileMoneyReceipt>(GetBaseApiPath() + "/receipts", options);
-    }
-
-    /**
-        Retrieves the mobile money receipt with the given ID.
-    */
-    public async Task<MobileMoneyReceipt> GetReceiptByIdAsync(string id)
-    {
-        return new MobileMoneyReceipt(api, (JObject) await api.DoRequestAsync("GET", GetBaseApiPath() + "/receipts/" + id));
-    }
-
-    /**
-        Initializes the mobile money receipt with the given ID without making an API request.
-    */
-    public MobileMoneyReceipt InitReceiptById(string id)
-    {
-        return new MobileMoneyReceipt(api, Util.Options("project_id", Get("id"), "id", id), false);
     }
 
     /**
