@@ -123,6 +123,24 @@ public class Project : Entity
     }
 
     /**
+        Creates and/or updates up to 200 contacts in a single API call. When creating or updating a
+        large number of contacts, this method is significantly faster than sending a separate API
+        request for each contact.
+        
+        By default, if the phone number for any contact matches an existing
+        contact, the existing contact will be updated with any information provided. This behavior
+        can be modified by setting the `lookup_key` parameter to look up contacts by another field,
+        including a custom variable.
+        
+        If any contact was not found matching the provided `lookup_key`, a
+        new contact will be created.
+    */
+    public async Task<JObject> ImportContactsAsync(JObject options)
+    {
+        return (JObject) await api.DoRequestAsync("POST", GetBaseApiPath() + "/import_contacts", options);
+    }
+
+    /**
         Queries contacts within the given project.
     */
     public APICursor<Contact> QueryContacts(JObject options = null)

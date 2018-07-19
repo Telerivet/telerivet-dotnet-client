@@ -16,7 +16,7 @@ namespace Telerivet.Client
 
 public class TelerivetAPI
 {
-    public static String ClientVersion = "1.4.0";
+    public static String ClientVersion = "1.4.1";
 
     private int numRequests = 0;
 
