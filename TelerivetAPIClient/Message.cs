@@ -305,10 +305,10 @@ public class Message : Entity
       }
     }
 
-    public long? TimeSent
+    public long TimeSent
     {
       get {
-          return (long?) Get("time_sent");
+          return (long) Get("time_sent");
       }
     }
 
