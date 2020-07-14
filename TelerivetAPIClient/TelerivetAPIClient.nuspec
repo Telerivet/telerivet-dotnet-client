@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Telerivet.NET</id>
-        <version>1.4.1</version>
+        <version>1.4.6</version>
         <authors>youngj</authors>
         <projectUrl>https://telerivet.com/api</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>

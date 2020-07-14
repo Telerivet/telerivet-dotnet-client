@@ -59,6 +59,7 @@
     <Compile Include="Service.cs" />
     <Compile Include="ContactServiceState.cs" />
     <Compile Include="Organization.cs" />
+    <Compile Include="AirtimeTransaction.cs" />
 	<Compile Include="TelerivetAPI.cs" />
 	<Compile Include="Entity.cs" />
 	<Compile Include="Util.cs" />

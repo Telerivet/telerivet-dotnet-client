@@ -27,8 +27,17 @@ namespace Telerivet.Client
           * Time the contact was added in Telerivet
           * Read-only
       
+      - time_updated (UNIX timestamp)
+          * Time the contact was last updated in Telerivet
+          * Read-only
+      
       - send_blocked (bool)
           * True if Telerivet is blocked from sending messages to this contact
+          * Updatable via API
+      
+      - conversation_status
+          * Current status of the conversation with this contact
+          * Allowed values: closed, active, handled
           * Updatable via API
       
       - last_message_time (UNIX timestamp)
@@ -217,6 +226,13 @@ public class Contact : Entity
       }
     }
 
+    public long TimeUpdated
+    {
+      get {
+          return (long) Get("time_updated");
+      }
+    }
+
     public bool SendBlocked
     {
       get {
@@ -224,6 +240,16 @@ public class Contact : Entity
       }
       set {
           Set("send_blocked", value);
+      }
+    }
+
+    public String ConversationStatus
+    {
+      get {
+          return (String) Get("conversation_status");
+      }
+      set {
+          Set("conversation_status", value);
       }
     }
 

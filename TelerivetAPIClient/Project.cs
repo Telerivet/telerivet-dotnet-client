@@ -46,7 +46,7 @@ namespace Telerivet.Client
 public class Project : Entity
 {
     /**
-        Sends one message (SMS, voice call, or USSD request).
+        Sends one message (SMS, MMS, voice call, or USSD request).
     */
     public async Task<Message> SendMessageAsync(JObject options)
     {
@@ -55,7 +55,11 @@ public class Project : Entity
 
     /**
         Sends a text message (optionally with mail-merge templates) or voice call to a group or a
-        list of up to 500 phone numbers
+        list of up to 500 phone numbers.
+        
+        With `message_type`=`service`, invokes an automated service (such as
+        a poll) for a group or list of phone numbers. Any service that can be triggered for a
+        contact can be invoked via this method, whether or not the service actually sends a message.
     */
     public async Task<Broadcast> SendBroadcastAsync(JObject options)
     {
@@ -86,6 +90,11 @@ public class Project : Entity
         Schedules a message to a group or single contact. Note that Telerivet only sends scheduled
         messages approximately once every 15 seconds, so it is not possible to control the exact
         second at which a scheduled message is sent.
+        
+        With `message_type`=`service`, schedules an automated service (such
+        as a poll) to be invoked for a group or list of phone numbers. Any service that can be
+        triggered for a contact can be scheduled via this method, whether or not the service
+        actually sends a message.
     */
     public async Task<ScheduledMessage> ScheduleMessageAsync(JObject options)
     {
@@ -412,6 +421,30 @@ public class Project : Entity
     public async Task<JArray> GetUsersAsync()
     {
         return (JArray) await api.DoRequestAsync("GET", GetBaseApiPath() + "/users");
+    }
+
+    /**
+        Returns information about each airtime transaction.
+    */
+    public APICursor<AirtimeTransaction> QueryAirtimeTransactions(JObject options = null)
+    {
+        return api.NewCursor<AirtimeTransaction>(GetBaseApiPath() + "/airtime_transactions", options);
+    }
+
+    /**
+        Gets an airtime transaction by ID
+    */
+    public async Task<AirtimeTransaction> GetAirtimeTransactionByIdAsync(string id)
+    {
+        return new AirtimeTransaction(api, (JObject) await api.DoRequestAsync("GET", GetBaseApiPath() + "/airtime_transactions/" + id));
+    }
+
+    /**
+        Initializes an airtime transaction by ID without making an API request.
+    */
+    public AirtimeTransaction InitAirtimeTransactionById(string id)
+    {
+        return new AirtimeTransaction(api, Util.Options("project_id", Get("id"), "id", id), false);
     }
 
     /**

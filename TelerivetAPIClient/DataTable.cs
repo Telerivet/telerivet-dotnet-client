@@ -32,6 +32,18 @@ namespace Telerivet.Client
           * Number of rows in the table
           * Read-only
       
+      - show_add_row (bool)
+          * Whether to allow adding or importing rows via the web app
+          * Updatable via API
+      
+      - show_stats (bool)
+          * Whether to show row statistics in the web app
+          * Updatable via API
+      
+      - show_contact_columns (bool)
+          * Whether to show 'Contact Name' and 'Phone Number' columns in the web app
+          * Updatable via API
+      
       - vars (JObject)
           * Custom variables stored for this data table
           * Updatable via API
@@ -77,12 +89,21 @@ public class DataTable : Entity
 
     /**
         Gets a list of all fields (columns) defined for this data table. The return value is an
-        array of objects with the properties 'name' and 'variable'. (Fields are automatically
-        created any time a DataRow's 'vars' property is updated.)
+        array of objects with the properties 'name', 'variable', 'type', 'order', 'readonly', and
+        'lookup_key'. (Fields are automatically created any time a DataRow's 'vars' property is
+        updated.)
     */
     public async Task<JArray> GetFieldsAsync()
     {
         return (JArray) await api.DoRequestAsync("GET", GetBaseApiPath() + "/fields");
+    }
+
+    /**
+        Allows customizing how a field (column) is displayed in the Telerivet web app.
+    */
+    public async Task<JObject> SetFieldMetadataAsync(string variable, JObject options = null)
+    {
+        return (JObject) await api.DoRequestAsync("POST", GetBaseApiPath() + "/fields/" + variable, options);
     }
 
     /**
@@ -133,6 +154,36 @@ public class DataTable : Entity
     {
       get {
           return (int) Get("num_rows");
+      }
+    }
+
+    public bool ShowAddRow
+    {
+      get {
+          return (bool) Get("show_add_row");
+      }
+      set {
+          Set("show_add_row", value);
+      }
+    }
+
+    public bool ShowStats
+    {
+      get {
+          return (bool) Get("show_stats");
+      }
+      set {
+          Set("show_stats", value);
+      }
+    }
+
+    public bool ShowContactColumns
+    {
+      get {
+          return (bool) Get("show_contact_columns");
+      }
+      set {
+          Set("show_contact_columns", value);
       }
     }
 
