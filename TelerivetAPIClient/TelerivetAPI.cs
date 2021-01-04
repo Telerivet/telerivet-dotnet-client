@@ -14,15 +14,16 @@ using System.IO;
 namespace Telerivet.Client
 {
 
-public class TelerivetAPI
+public class TelerivetAPI : IDisposable
 {
-    public static String ClientVersion = "1.4.6";
+    public static String ClientVersion = "1.4.9";
 
     private int numRequests = 0;
 
     private String apiKey;
     private String apiUrl;
     private HttpClient httpClient;
+    private bool disposed;
 
     /**
         Initializes a client handle to the Telerivet REST API.
@@ -270,6 +271,30 @@ public class TelerivetAPI
         {
             throw new TelerivetAPIException("Telerivet API error (HTTP " + httpResponse.StatusCode + ")");
         }
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!disposed)
+        {
+            if (httpClient != null)
+            {
+                httpClient.Dispose();
+                httpClient = null;
+            }
+
+            disposed = true;
+        }
+    }
+
+    ~TelerivetAPI()
+    {
+        Dispose(false);
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
     }
 }
 

@@ -29,7 +29,8 @@ namespace Telerivet.Client
           * Updatable via API
       
       - num_rows (int)
-          * Number of rows in the table
+          * Number of rows in the table. For performance reasons, this number may sometimes be
+              out-of-date.
           * Read-only
       
       - show_add_row (bool)

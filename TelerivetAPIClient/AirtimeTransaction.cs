@@ -72,6 +72,10 @@ namespace Telerivet.Client
           * ID of the project that the airtime transaction belongs to
           * Read-only
       
+      - external_id
+          * The ID of this transaction from an external airtime gateway provider, if available.
+          * Read-only
+      
       - vars (JObject)
           * Custom variables stored for this transaction
           * Updatable via API
@@ -167,6 +171,13 @@ public class AirtimeTransaction : Entity
     {
       get {
           return (String) Get("project_id");
+      }
+    }
+
+    public String ExternalId
+    {
+      get {
+          return (String) Get("external_id");
       }
     }
 
