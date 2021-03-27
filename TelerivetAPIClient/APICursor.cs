@@ -47,7 +47,7 @@ namespace Telerivet.Client
                 typeof(bool)
             });
         }
-   
+
         public APICursor<T> Limit(int limit)
         {
             this.limit = limit;
@@ -84,24 +84,24 @@ namespace Telerivet.Client
         }
 
         public async Task<T> NextAsync()
-        {    
+        {
             if (limit != null && offset >= limit)
             {
                 return null;
             }
-        
+
             if (data == null || (pos >= data.Count && truncated))
-            {                
+            {
                 await loadNextPage();
             }
-        
+
             if (pos < data.Count)
             {
                 JObject itemData = (JObject) data[pos];
                 pos += 1;
                 offset += 1;
-            
-                return (T)ctor.Invoke(new object[] { api, itemData, true });    
+
+                return (T)ctor.Invoke(new object[] { api, itemData, true });
             }
             else
             {
@@ -109,7 +109,7 @@ namespace Telerivet.Client
             }
         }
 
-        private async Task loadNextPage()
+        private async System.Threading.Tasks.Task loadNextPage()
         {
             JObject requestParams = new JObject(parameters);
 
@@ -132,6 +132,6 @@ namespace Telerivet.Client
 
             pos = 0;
         }
-    
+
     }
 }

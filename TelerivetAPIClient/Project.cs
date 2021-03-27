@@ -267,33 +267,33 @@ public class Project : Entity
         service can use custom variables on the task object (e.g. `task.vars.example`), such as
         to store aggregate statistics for the rows matching the filter.
     */
-    public async Task<Task> CreateTaskAsync(JObject options)
+    public async Task<BatchTask> CreateTaskAsync(JObject options)
     {
-        return new Task(api, (JObject) await api.DoRequestAsync("POST", GetBaseApiPath() + "/tasks", options));
+        return new BatchTask(api, (JObject) await api.DoRequestAsync("POST", GetBaseApiPath() + "/tasks", options));
     }
 
     /**
         Queries batch tasks within the given project.
     */
-    public APICursor<Task> QueryTasks(JObject options = null)
+    public APICursor<BatchTask> QueryTasks(JObject options = null)
     {
-        return api.NewCursor<Task>(GetBaseApiPath() + "/tasks", options);
+        return api.NewCursor<BatchTask>(GetBaseApiPath() + "/tasks", options);
     }
 
     /**
         Retrieves the task with the given ID.
     */
-    public async Task<Task> GetTaskByIdAsync(string id)
+    public async Task<BatchTask> GetTaskByIdAsync(string id)
     {
-        return new Task(api, (JObject) await api.DoRequestAsync("GET", GetBaseApiPath() + "/tasks/" + id));
+        return new BatchTask(api, (JObject) await api.DoRequestAsync("GET", GetBaseApiPath() + "/tasks/" + id));
     }
 
     /**
         Initializes the task with the given ID without making an API request.
     */
-    public Task InitTaskById(string id)
+    public BatchTask InitTaskById(string id)
     {
-        return new Task(api, Util.Options("project_id", Get("id"), "id", id), false);
+        return new BatchTask(api, Util.Options("project_id", Get("id"), "id", id), false);
     }
 
     /**

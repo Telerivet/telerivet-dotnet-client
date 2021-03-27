@@ -82,14 +82,14 @@ namespace Telerivet.Client
           * Read-only
 */
 
-public class Task : Entity
+public class BatchTask : Entity
 {
     /**
         Cancels a task that is not yet complete.
     */
-    public async Task<Task> CancelAsync()
+    public async Task<BatchTask> CancelAsync()
     {
-        return new Task(api, (JObject) await api.DoRequestAsync("POST", GetBaseApiPath() + "/cancel"));
+        return new BatchTask(api, (JObject) await api.DoRequestAsync("POST", GetBaseApiPath() + "/cancel"));
     }
 
     public string Id
@@ -195,7 +195,7 @@ public class Task : Entity
         return "/projects/" + ProjectId + "/tasks/" + Id + "";
     }
 
-    public Task(TelerivetAPI api, JObject data, bool isLoaded = true)
+    public BatchTask(TelerivetAPI api, JObject data, bool isLoaded = true)
         : base(api, data, isLoaded)
     {
     }
