@@ -16,7 +16,7 @@ namespace Telerivet.Client
 
 public class TelerivetAPI : IDisposable
 {
-    public static String ClientVersion = "1.4.9";
+    public static String ClientVersion = "1.5.0";
 
     private int numRequests = 0;
 

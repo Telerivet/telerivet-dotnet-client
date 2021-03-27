@@ -49,6 +49,7 @@
     <Compile Include="ScheduledMessage.cs" />
     <Compile Include="Contact.cs" />
     <Compile Include="Broadcast.cs" />
+    <Compile Include="Task.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="Label.cs" />
     <Compile Include="Group.cs" />

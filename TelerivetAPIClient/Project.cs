@@ -246,6 +246,57 @@ public class Project : Entity
     }
 
     /**
+        Creates and starts an asynchronous task that is applied to all entities matching a filter
+        (e.g. contacts, messages, or data rows).
+        Tasks are designed to efficiently process a large number of
+        entities. When processing a large number of entities,
+        tasks are much faster than using the API to query and loop over
+        all objects matching a filter.
+        
+        Several different types of tasks are supported, including
+        applying services to contacts, messages, or data rows;
+        adding or removing contacts from a group; blocking or unblocking
+        sending messages to a contact; updating a custom variable;
+        deleting contacts, messages, or data rows; or exporting data to
+        CSV.
+        
+        When using a task to apply a Custom Actions or Cloud Script API
+        service (`apply_service_to_contacts`, `apply_service_to_rows`, or
+        `apply_service_to_messages`),
+        the `task` variable will be available within the service. The
+        service can use custom variables on the task object (e.g. `task.vars.example`), such as
+        to store aggregate statistics for the rows matching the filter.
+    */
+    public async Task<Task> CreateTaskAsync(JObject options)
+    {
+        return new Task(api, (JObject) await api.DoRequestAsync("POST", GetBaseApiPath() + "/tasks", options));
+    }
+
+    /**
+        Queries batch tasks within the given project.
+    */
+    public APICursor<Task> QueryTasks(JObject options = null)
+    {
+        return api.NewCursor<Task>(GetBaseApiPath() + "/tasks", options);
+    }
+
+    /**
+        Retrieves the task with the given ID.
+    */
+    public async Task<Task> GetTaskByIdAsync(string id)
+    {
+        return new Task(api, (JObject) await api.DoRequestAsync("GET", GetBaseApiPath() + "/tasks/" + id));
+    }
+
+    /**
+        Initializes the task with the given ID without making an API request.
+    */
+    public Task InitTaskById(string id)
+    {
+        return new Task(api, Util.Options("project_id", Get("id"), "id", id), false);
+    }
+
+    /**
         Queries groups within the given project.
     */
     public APICursor<Group> QueryGroups(JObject options = null)

@@ -28,7 +28,7 @@ Installation
 ------------
 To install the library, run the following command in the Package Manager Console in Visual Studio:
 
-PM> Install-Package Telerivet.NET -Version 1.4.9
+PM> Install-Package Telerivet.NET -Version 1.5.0
 
 
 Example Usage
