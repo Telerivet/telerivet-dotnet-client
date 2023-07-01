@@ -113,10 +113,10 @@ public class BatchTask : Entity
       }
     }
 
-    public String FilterType
+    public string FilterType
     {
       get {
-          return (String) Get("filter_type");
+          return (string) Get("filter_type");
       }
     }
 
@@ -183,10 +183,10 @@ public class BatchTask : Entity
       }
     }
 
-    public String ProjectId
+    public string ProjectId
     {
       get {
-          return (String) Get("project_id");
+          return (string) Get("project_id");
       }
     }
 

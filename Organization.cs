@@ -22,13 +22,24 @@ namespace Telerivet.Client
           * Updatable via API
       
       - timezone_id
-          * Billing quota time zone ID; see
-              <http://en.wikipedia.org/wiki/List_of_tz_database_time_zones>
+          * Billing quota time zone ID; see [List of tz database time zones Wikipedia
+              article](http://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
           * Updatable via API
 */
 
 public class Organization : Entity
 {
+    /**
+        Creates a new project.
+        
+        Some project settings are not currently possible to configure via
+        the API, and can only be edited via the web app after the project is created.
+    */
+    public async Task<Project> CreateProjectAsync(JObject options)
+    {
+        return new Project(api, (JObject) await api.DoRequestAsync("POST", GetBaseApiPath() + "/projects", options));
+    }
+
     /**
         Saves any fields that have changed for this organization.
     */
@@ -56,6 +67,16 @@ public class Organization : Entity
     }
 
     /**
+        Retrieves statistics about messages sent or received via Telerivet. This endpoint returns
+        historical data that is computed shortly after midnight each day in the project's time zone,
+        and does not contain message statistics for the current day.
+    */
+    public async Task<JObject> GetMessageStatsAsync(JObject options)
+    {
+        return (JObject) await api.DoRequestAsync("GET", GetBaseApiPath() + "/message_stats", options);
+    }
+
+    /**
         Queries projects in this organization.
     */
     public APICursor<Project> QueryProjects(JObject options = null)
@@ -70,20 +91,20 @@ public class Organization : Entity
       }
     }
 
-    public String Name
+    public string Name
     {
       get {
-          return (String) Get("name");
+          return (string) Get("name");
       }
       set {
           Set("name", value);
       }
     }
 
-    public String TimezoneId
+    public string TimezoneId
     {
       get {
-          return (String) Get("timezone_id");
+          return (string) Get("timezone_id");
       }
       set {
           Set("timezone_id", value);

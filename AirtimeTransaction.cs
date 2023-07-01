@@ -35,6 +35,14 @@ namespace Telerivet.Client
           * Country code
           * Read-only
       
+      - time_created (UNIX timestamp)
+          * The time that the airtime transaction was created on Telerivet's servers
+          * Read-only
+      
+      - transaction_time (UNIX timestamp)
+          * The time that the airtime transaction was sent, or null if it has not been sent
+          * Read-only
+      
       - status
           * Current status of airtime transaction (`successful`, `failed`, `cancelled`,
               `queued`, `pending_approval`, or `pending_payment`)
@@ -83,101 +91,115 @@ namespace Telerivet.Client
 
 public class AirtimeTransaction : Entity
 {
-    public String Id
+    public string Id
     {
       get {
-          return (String) Get("id");
+          return (string) Get("id");
       }
     }
 
-    public String ToNumber
+    public string ToNumber
     {
       get {
-          return (String) Get("to_number");
+          return (string) Get("to_number");
       }
     }
 
-    public String OperatorName
+    public string OperatorName
     {
       get {
-          return (String) Get("operator_name");
+          return (string) Get("operator_name");
       }
     }
 
-    public String Country
+    public string Country
     {
       get {
-          return (String) Get("country");
+          return (string) Get("country");
       }
     }
 
-    public String Status
+    public long TimeCreated
     {
       get {
-          return (String) Get("status");
+          return (long) Get("time_created");
       }
     }
 
-    public String StatusText
+    public long TransactionTime
     {
       get {
-          return (String) Get("status_text");
+          return (long) Get("transaction_time");
       }
     }
 
-    public String Value
+    public string Status
     {
       get {
-          return (String) Get("value");
+          return (string) Get("status");
       }
     }
 
-    public String ValueCurrency
+    public string StatusText
     {
       get {
-          return (String) Get("value_currency");
+          return (string) Get("status_text");
       }
     }
 
-    public String Price
+    public string Value
     {
       get {
-          return (String) Get("price");
+          return (string) Get("value");
       }
     }
 
-    public String PriceCurrency
+    public string ValueCurrency
     {
       get {
-          return (String) Get("price_currency");
+          return (string) Get("value_currency");
       }
     }
 
-    public String ContactId
+    public string Price
     {
       get {
-          return (String) Get("contact_id");
+          return (string) Get("price");
       }
     }
 
-    public String ServiceId
+    public string PriceCurrency
     {
       get {
-          return (String) Get("service_id");
+          return (string) Get("price_currency");
       }
     }
 
-    public String ProjectId
+    public string ContactId
     {
       get {
-          return (String) Get("project_id");
+          return (string) Get("contact_id");
       }
     }
 
-    public String ExternalId
+    public string ServiceId
     {
       get {
-          return (String) Get("external_id");
+          return (string) Get("service_id");
+      }
+    }
+
+    public string ProjectId
+    {
+      get {
+          return (string) Get("project_id");
+      }
+    }
+
+    public string ExternalId
+    {
+      get {
+          return (string) Get("external_id");
       }
     }
 

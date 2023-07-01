@@ -22,13 +22,13 @@ as well as in the comments of the C# source files.
 
 System Requirements
 -------------------
-.NET framework 4.5 or higher
+.NET 6.0
 
 Installation
 ------------
 To install the library, run the following command in the Package Manager Console in Visual Studio:
 
-PM> Install-Package Telerivet.NET -Version 1.5.1
+PM> Install-Package Telerivet.NET -Version 1.7.1
 
 
 Example Usage

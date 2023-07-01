@@ -83,10 +83,10 @@ public class Group : Entity
       }
     }
 
-    public String Name
+    public string Name
     {
       get {
-          return (String) Get("name");
+          return (string) Get("name");
       }
       set {
           Set("name", value);
@@ -114,10 +114,10 @@ public class Group : Entity
       }
     }
 
-    public String ProjectId
+    public string ProjectId
     {
       get {
-          return (String) Get("project_id");
+          return (string) Get("project_id");
       }
     }
 

@@ -29,6 +29,10 @@ namespace Telerivet.Client
           * Name of the service
           * Updatable via API
       
+      - service_type
+          * Type of the service.
+          * Read-only
+      
       - active (bool)
           * Whether the service is active or inactive. Inactive services are not automatically
               triggered and cannot be invoked via the API.
@@ -56,31 +60,48 @@ namespace Telerivet.Client
           * ID of the project this service belongs to
           * Read-only
       
-      - label_id
-          * ID of the label containing messages sent or received by this service (currently only
-              used for polls)
-          * Read-only
-      
       - response_table_id
-          * ID of the data table where responses to this service will be stored (currently only
-              used for polls)
-          * Read-only
+          * ID of the data table where responses to this service will be stored
+          * Updatable via API
       
-      - sample_group_id
-          * ID of the group containing contacts that have been invited to interact with this
-              service (currently only used for polls)
-          * Read-only
+      - phone_ids
+          * IDs of phones (basic routes) associated with this service, or null if the service is
+              associated with all routes. Only applies for service types that handle incoming
+              messages, voice calls, or USSD sessions.
+          * Updatable via API
       
-      - respondent_group_id
-          * ID of the group containing contacts that have completed an interaction with this
-              service (currently only used for polls)
-          * Read-only
+      - apply_mode
+          * If apply_mode is `unhandled`, the service will not be triggered if another service
+              has already handled the incoming message. If apply_mode is `always`, the service will
+              always be triggered regardless of other services. Only applies to services that handle
+              incoming messages.
+          * Allowed values: always, unhandled
+          * Updatable via API
       
-      - questions (array)
-          * Array of objects describing each question in a poll (only used for polls). Each
-              object has the properties `"id"` (the question ID), `"content"` (the text of the
-              question), and `"question_type"` (either `"multiple_choice"`, `"missed_call"`, or
-              `"open"`).
+      - contact_number_filter
+          * If contact_number_filter is `long_number`, this service will only be triggered if
+              the contact phone number has at least 7 digits (ignoring messages from shortcodes and
+              alphanumeric senders). If contact_number_filter is `all`, the service will be
+              triggered for all contact phone numbers.  Only applies to services that handle
+              incoming messages.
+          * Allowed values: long_number, all
+          * Updatable via API
+      
+      - show_action (bool)
+          * Whether this service is shown in the 'Actions' menu within the Telerivet web app
+              when the service is active. Only provided for service types that are manually
+              triggered.
+          * Updatable via API
+      
+      - direction
+          * Determines whether the service handles incoming voice calls, outgoing voice calls,
+              or both. Only applies to services that handle voice calls.
+          * Allowed values: incoming, outgoing, both
+          * Updatable via API
+      
+      - webhook_url
+          * URL that a third-party can invoke to trigger this service. Only provided for
+              services that are triggered by a webhook request.
           * Read-only
  */
 public class Service : Entity 
@@ -142,11 +163,44 @@ public class Service : Entity
     }
 
     /**
+        Gets configuration specific to the type of automated service.
+        
+        Only certain types of services provide their configuration via the
+        API.
+    */
+    public async Task<JObject> GetConfigAsync()
+    {
+        return (JObject) await api.DoRequestAsync("GET", GetBaseApiPath() + "/config");
+    }
+
+    /**
+        Updates configuration specific to the type of automated service.
+        
+        Only certain types of services support updating their configuration
+        via the API.
+        
+        Note: when updating a service of type custom_template_instance,
+        the validation script will be invoked when calling this method.
+    */
+    public async Task<JObject> SetConfigAsync(JObject options)
+    {
+        return (JObject) await api.DoRequestAsync("POST", GetBaseApiPath() + "/config", options);
+    }
+
+    /**
         Saves any fields or custom variables that have changed for this service.
     */
     public override async Task SaveAsync()
     {
         await base.SaveAsync();
+    }
+
+    /**
+        Deletes this service.
+    */
+    public async Task DeleteAsync()
+    {
+        await api.DoRequestAsync("DELETE", GetBaseApiPath());
     }
 
     public string Id
@@ -156,13 +210,20 @@ public class Service : Entity
       }
     }
 
-    public String Name
+    public string Name
     {
       get {
-          return (String) Get("name");
+          return (string) Get("name");
       }
       set {
           Set("name", value);
+      }
+    }
+
+    public string ServiceType
+    {
+      get {
+          return (string) Get("service_type");
       }
     }
 
@@ -193,45 +254,77 @@ public class Service : Entity
       }
     }
 
-    public String ProjectId
+    public string ProjectId
     {
       get {
-          return (String) Get("project_id");
+          return (string) Get("project_id");
       }
     }
 
-    public String LabelId
+    public string ResponseTableId
     {
       get {
-          return (String) Get("label_id");
+          return (string) Get("response_table_id");
+      }
+      set {
+          Set("response_table_id", value);
       }
     }
 
-    public String ResponseTableId
+    public string PhoneIds
     {
       get {
-          return (String) Get("response_table_id");
+          return (string) Get("phone_ids");
+      }
+      set {
+          Set("phone_ids", value);
       }
     }
 
-    public String SampleGroupId
+    public string ApplyMode
     {
       get {
-          return (String) Get("sample_group_id");
+          return (string) Get("apply_mode");
+      }
+      set {
+          Set("apply_mode", value);
       }
     }
 
-    public String RespondentGroupId
+    public string ContactNumberFilter
     {
       get {
-          return (String) Get("respondent_group_id");
+          return (string) Get("contact_number_filter");
+      }
+      set {
+          Set("contact_number_filter", value);
       }
     }
 
-    public JArray Questions
+    public bool ShowAction
     {
       get {
-          return (JArray) Get("questions");
+          return (bool) Get("show_action");
+      }
+      set {
+          Set("show_action", value);
+      }
+    }
+
+    public string Direction
+    {
+      get {
+          return (string) Get("direction");
+      }
+      set {
+          Set("direction", value);
+      }
+    }
+
+    public string WebhookUrl
+    {
+      get {
+          return (string) Get("webhook_url");
       }
     }
 

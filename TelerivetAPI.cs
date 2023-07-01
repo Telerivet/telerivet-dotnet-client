@@ -16,7 +16,7 @@ namespace Telerivet.Client
 
 public class TelerivetAPI : IDisposable
 {
-    public static String ClientVersion = "1.5.1";
+    public static String ClientVersion = "1.7.1";
 
     private int numRequests = 0;
 
@@ -87,7 +87,7 @@ public class TelerivetAPI : IDisposable
         return this.NewCursor<Organization>(GetBaseApiPath() + "/organizations", options);
     }
 
-    public String GetBaseApiPath()
+    public string GetBaseApiPath()
     {
         return "";
     }
@@ -157,7 +157,7 @@ public class TelerivetAPI : IDisposable
         return String.Join("&", paramsList.ToArray());
     }
 
-    public APICursor<T> NewCursor<T>(String path, JObject options = null) where T : Entity
+    public APICursor<T> NewCursor<T>(String path, JObject options = null) where T : class
     {
         return new APICursor<T>(this, path, options);
     }

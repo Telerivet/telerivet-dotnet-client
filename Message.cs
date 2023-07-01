@@ -26,12 +26,12 @@ namespace Telerivet.Client
       - status
           * Current status of the message
           * Allowed values: ignored, processing, received, sent, queued, failed, failed_queued,
-              cancelled, delivered, not_delivered
+              cancelled, delivered, not_delivered, read
           * Read-only
       
       - message_type
           * Type of the message
-          * Allowed values: sms, mms, ussd, call, service
+          * Allowed values: sms, mms, ussd, ussd_session, call, chat, service
           * Read-only
       
       - source
@@ -79,6 +79,13 @@ namespace Telerivet.Client
           * List of IDs of labels applied to this message
           * Read-only
       
+      - route_params (JObject)
+          * Route-specific parameters for the message. The parameters object may have keys
+              matching the `phone_type` field of a phone (basic route) that may be used to send the
+              message. The corresponding value is an object with route-specific parameters to use
+              when the message is sent by that type of route.
+          * Read-only
+      
       - vars (JObject)
           * Custom variables stored for this message
           * Updatable via API
@@ -94,8 +101,12 @@ namespace Telerivet.Client
           * Updatable via API
       
       - external_id
-          * The ID of this message from an external SMS gateway provider (e.g. Twilio or Nexmo),
-              if available.
+          * The ID of this message from an external SMS gateway provider (e.g. Twilio or
+              Vonage), if available.
+          * Read-only
+      
+      - num_parts (number)
+          * The number of SMS parts associated with the message, if applicable and if known.
           * Read-only
       
       - price (number)
@@ -130,15 +141,6 @@ namespace Telerivet.Client
           * Allowed values: female, male
           * Read-only
       
-      - mms_parts (array)
-          * A list of parts in the MMS message, the same as returned by the
-              [getMMSParts](#Message.getMMSParts) method.
-              
-              Note: This property is only present when retrieving an individual
-              MMS message by ID, not when querying a list of messages. In other cases, use
-              [getMMSParts](#Message.getMMSParts).
-          * Read-only
-      
       - track_clicks (boolean)
           * If true, URLs in the message content are short URLs that redirect to a destination
               URL.
@@ -146,12 +148,22 @@ namespace Telerivet.Client
       
       - short_urls (array)
           * For text messages containing short URLs, this is an array of objects with the
-              properties `short_url`, `link_type`, and `time_clicked` (the first time that URL was
-              clicked). If `link_type` is "redirect", the object also contains a `destination_url`
-              property. If `link_type` is "media", the object also contains an `media_index`
-              property (the index in the media array). If `link_type` is "service", the object also
-              contains a `service_id` property. This property is undefined for messages that do not
-              contain short URLs.
+              properties `short_url`, `link_type`, `time_clicked` (the first time that URL was
+              clicked), and `expiration_time`. If `link_type` is "redirect", the object also
+              contains a `destination_url` property. If `link_type` is "media", the object also
+              contains an `media_index` property (the index in the media array). If `link_type` is
+              "service", the object also contains a `service_id` property. This property is
+              undefined for messages that do not contain short URLs.
+          * Read-only
+      
+      - network_code (string)
+          * A string identifying the network that sent or received the message, if known. For
+              mobile networks, this string contains the 3-digit mobile country code (MCC) followed
+              by the 2- or 3-digit mobile network code (MNC), which results in a 5- or 6-digit
+              number. For lists of mobile network operators and their corresponding MCC/MNC values,
+              see [Mobile country code Wikipedia
+              article](https://en.wikipedia.org/wiki/Mobile_country_code). The network_code property
+              may be non-numeric for messages not sent via mobile networks.
           * Read-only
       
       - media (array)
@@ -160,6 +172,27 @@ namespace Telerivet.Client
               Unknown properties are null. This property is undefined for messages that do not
               contain media files. Note: For files uploaded via the Telerivet web app, the URL is
               temporary and may not be valid for more than 1 day.
+          * Read-only
+      
+      - mms_parts (array)
+          * A list of parts in the MMS message (only for incoming MMS messages received via
+              Telerivet Gateway Android app).
+              
+              Each MMS part in the list is an object with the following
+              properties:
+              
+              - cid: MMS content-id
+              - type: MIME type
+              - filename: original filename
+              - size (int): number of bytes
+              - url: URL where the content for this part is stored (secret but
+              publicly accessible, so you could link/embed it in a web page without having to
+              re-host it yourself)
+              
+              In general, the `media` property of the message is recommended for
+              retrieving information about MMS media files, instead of `mms_parts`.
+              The `mms_parts` property is also only present when retrieving an
+              individual MMS message by ID, not when querying a list of messages.
           * Read-only
       
       - time_clicked (UNIX timestamp)
@@ -250,18 +283,15 @@ public class Message : Entity
     }
 
     /**
-        Retrieves a list of MMS parts for this message (empty for non-MMS messages).
+        (Deprecated) Retrieves a list of MMS parts for this message (only for incoming MMS messages
+        received via Telerivet Gateway Android app).
+        Note: This only works for MMS messages received via the Telerivet
+        Gateway Android app.
+        In general, the `media` property of the message is recommended for
+        retrieving information about MMS media files.
         
-        Each MMS part in the list is an object with the following
-        properties:
-        
-        - cid: MMS content-id
-        - type: MIME type
-        - filename: original filename
-        - size (int): number of bytes
-        - url: URL where the content for this part is stored (secret but
-        publicly accessible, so you could link/embed it in a web page without having to re-host it
-        yourself)
+        The return value has the same format as the `mms_parts` property of
+        the Message object.
     */
     public async Task<JArray> GetMMSPartsAsync()
     {
@@ -312,31 +342,31 @@ public class Message : Entity
       }
     }
 
-    public String Direction
+    public string Direction
     {
       get {
-          return (String) Get("direction");
+          return (string) Get("direction");
       }
     }
 
-    public String Status
+    public string Status
     {
       get {
-          return (String) Get("status");
+          return (string) Get("status");
       }
     }
 
-    public String MessageType
+    public string MessageType
     {
       get {
-          return (String) Get("message_type");
+          return (string) Get("message_type");
       }
     }
 
-    public String Source
+    public string Source
     {
       get {
-          return (String) Get("source");
+          return (string) Get("source");
       }
     }
 
@@ -406,6 +436,13 @@ public class Message : Entity
       }
     }
 
+    public JObject RouteParams
+    {
+      get {
+          return (JObject) Get("route_params");
+      }
+    }
+
     public int Priority
     {
       get {
@@ -413,20 +450,27 @@ public class Message : Entity
       }
     }
 
-    public String ErrorMessage
+    public string ErrorMessage
     {
       get {
-          return (String) Get("error_message");
+          return (string) Get("error_message");
       }
       set {
           Set("error_message", value);
       }
     }
 
-    public String ExternalId
+    public string ExternalId
     {
       get {
-          return (String) Get("external_id");
+          return (string) Get("external_id");
+      }
+    }
+
+    public double? NumParts
+    {
+      get {
+          return (double?) Get("num_parts");
       }
     }
 
@@ -437,10 +481,10 @@ public class Message : Entity
       }
     }
 
-    public String PriceCurrency
+    public string PriceCurrency
     {
       get {
-          return (String) Get("price_currency");
+          return (string) Get("price_currency");
       }
     }
 
@@ -458,38 +502,31 @@ public class Message : Entity
       }
     }
 
-    public String AudioUrl
+    public string AudioUrl
     {
       get {
-          return (String) Get("audio_url");
+          return (string) Get("audio_url");
       }
     }
 
-    public String TtsLang
+    public string TtsLang
     {
       get {
-          return (String) Get("tts_lang");
+          return (string) Get("tts_lang");
       }
     }
 
-    public String TtsVoice
+    public string TtsVoice
     {
       get {
-          return (String) Get("tts_voice");
+          return (string) Get("tts_voice");
       }
     }
 
-    public JArray MmsParts
+    public string TrackClicks
     {
       get {
-          return (JArray) Get("mms_parts");
-      }
-    }
-
-    public String TrackClicks
-    {
-      get {
-          return (String) Get("track_clicks");
+          return (string) Get("track_clicks");
       }
     }
 
@@ -500,10 +537,24 @@ public class Message : Entity
       }
     }
 
+    public string NetworkCode
+    {
+      get {
+          return (string) Get("network_code");
+      }
+    }
+
     public JArray Media
     {
       get {
           return (JArray) Get("media");
+      }
+    }
+
+    public JArray MmsParts
+    {
+      get {
+          return (JArray) Get("mms_parts");
       }
     }
 
@@ -563,10 +614,10 @@ public class Message : Entity
       }
     }
 
-    public String ProjectId
+    public string ProjectId
     {
       get {
-          return (String) Get("project_id");
+          return (string) Get("project_id");
       }
     }
 

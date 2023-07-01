@@ -71,8 +71,8 @@ namespace Telerivet.Client
           * Read-only
       
       - default_route_id
-          * ID of the phone or route that Telerivet will use by default to send messages to this
-              contact (null if using project default route)
+          * ID of the basic route (phone) or custom route that Telerivet will use by default to
+              send messages to this contact (null if using project default route)
           * Updatable via API
       
       - group_ids (array of strings)
@@ -199,10 +199,10 @@ public class Contact : Entity
       }
     }
 
-    public String Name
+    public string Name
     {
       get {
-          return (String) Get("name");
+          return (string) Get("name");
       }
       set {
           Set("name", value);
@@ -243,10 +243,10 @@ public class Contact : Entity
       }
     }
 
-    public String ConversationStatus
+    public string ConversationStatus
     {
       get {
-          return (String) Get("conversation_status");
+          return (string) Get("conversation_status");
       }
       set {
           Set("conversation_status", value);
@@ -295,17 +295,17 @@ public class Contact : Entity
       }
     }
 
-    public String LastMessageId
+    public string LastMessageId
     {
       get {
-          return (String) Get("last_message_id");
+          return (string) Get("last_message_id");
       }
     }
 
-    public String DefaultRouteId
+    public string DefaultRouteId
     {
       get {
-          return (String) Get("default_route_id");
+          return (string) Get("default_route_id");
       }
       set {
           Set("default_route_id", value);
@@ -319,10 +319,10 @@ public class Contact : Entity
       }
     }
 
-    public String ProjectId
+    public string ProjectId
     {
       get {
-          return (String) Get("project_id");
+          return (string) Get("project_id");
       }
     }
 

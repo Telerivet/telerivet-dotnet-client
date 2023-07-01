@@ -41,7 +41,7 @@ namespace Telerivet.Client
 public class Route : Entity
 {
     /**
-        Saves any fields or custom variables that have changed for this route.
+        Saves any fields or custom variables that have changed for this custom route.
     */
     public override async Task SaveAsync()
     {
@@ -55,20 +55,20 @@ public class Route : Entity
       }
     }
 
-    public String Name
+    public string Name
     {
       get {
-          return (String) Get("name");
+          return (string) Get("name");
       }
       set {
           Set("name", value);
       }
     }
 
-    public String ProjectId
+    public string ProjectId
     {
       get {
-          return (String) Get("project_id");
+          return (string) Get("project_id");
       }
     }
 

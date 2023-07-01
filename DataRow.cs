@@ -80,10 +80,10 @@ public class DataRow : Entity
       }
     }
 
-    public String ContactId
+    public string ContactId
     {
       get {
-          return (String) Get("contact_id");
+          return (string) Get("contact_id");
       }
       set {
           Set("contact_id", value);
@@ -114,17 +114,17 @@ public class DataRow : Entity
       }
     }
 
-    public String TableId
+    public string TableId
     {
       get {
-          return (String) Get("table_id");
+          return (string) Get("table_id");
       }
     }
 
-    public String ProjectId
+    public string ProjectId
     {
       get {
-          return (String) Get("project_id");
+          return (string) Get("project_id");
       }
     }
 

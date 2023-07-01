@@ -92,17 +92,17 @@ public class ContactServiceState : Entity
       }
     }
 
-    public String ContactId
+    public string ContactId
     {
       get {
-          return (String) Get("contact_id");
+          return (string) Get("contact_id");
       }
     }
 
-    public String ServiceId
+    public string ServiceId
     {
       get {
-          return (String) Get("service_id");
+          return (string) Get("service_id");
       }
     }
 
@@ -120,10 +120,10 @@ public class ContactServiceState : Entity
       }
     }
 
-    public String ProjectId
+    public string ProjectId
     {
       get {
-          return (String) Get("project_id");
+          return (string) Get("project_id");
       }
     }
 

@@ -26,13 +26,27 @@ namespace Telerivet.Client
           * Updatable via API
       
       - timezone_id
-          * Default TZ database timezone ID; see
-              <http://en.wikipedia.org/wiki/List_of_tz_database_time_zones>
-          * Read-only
+          * Default TZ database timezone ID; see [List of tz database time zones Wikipedia
+              article](http://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
+          * Updatable via API
       
       - url_slug
           * Unique string used as a component of the project's URL in the Telerivet web app
-          * Read-only
+          * Updatable via API
+      
+      - default_route_id
+          * The ID of a basic route or custom route that will be used to send messages by
+              default (via both the API and web app), unless a particular route ID is specified when
+              sending the message.
+          * Updatable via API
+      
+      - auto_create_contacts (bool)
+          * If true, a contact will be automatically created for each unique phone number that a
+              message is sent to or received from. If false, contacts will not automatically be
+              created (unless contact information is modified by an automated service). The
+              Conversations tab in the web app will only show messages that are associated with a
+              contact.
+          * Updatable via API
       
       - vars (JObject)
           * Custom variables stored for this project
@@ -46,7 +60,7 @@ namespace Telerivet.Client
 public class Project : Entity
 {
     /**
-        Sends one message (SMS, MMS, voice call, or USSD request).
+        Sends one message (SMS, MMS, chat app message, voice call, or USSD request).
     */
     public async Task<Message> SendMessageAsync(JObject options)
     {
@@ -91,6 +105,9 @@ public class Project : Entity
         messages approximately once every 15 seconds, so it is not possible to control the exact
         second at which a scheduled message is sent.
         
+        Only one of the parameters group_id, to_number, and contact_id
+        should be provided.
+        
         With `message_type`=`service`, schedules an automated service (such
         as a poll) to be invoked for a group or list of phone numbers. Any service that can be
         triggered for a contact can be scheduled via this method, whether or not the service
@@ -99,6 +116,27 @@ public class Project : Entity
     public async Task<ScheduledMessage> ScheduleMessageAsync(JObject options)
     {
         return new ScheduledMessage(api, (JObject) await api.DoRequestAsync("POST", GetBaseApiPath() + "/scheduled", options));
+    }
+
+    /**
+        Creates a relative scheduled message. This allows scheduling messages on a different date
+        for each contact, for example on their birthday, a certain number of days before an
+        appointment, or a certain number of days after enrolling in a campaign.
+        
+        Telerivet will automatically create a
+        [ScheduledMessage](#ScheduledMessage) for each contact matching a RelativeScheduledMessage.
+        
+        Relative scheduled messages can be created for a group or an
+        individual contact, although dynamic groups are not supported. Only one of the parameters
+        group_id, to_number, and contact_id should be provided.
+        
+        With message_type=service, schedules an automated service (such as a
+        poll). Any service that can be triggered for a contact can be scheduled via this method,
+        whether or not the service actually sends a message.
+    */
+    public async Task<RelativeScheduledMessage> CreateRelativeScheduledMessageAsync(JObject options)
+    {
+        return new RelativeScheduledMessage(api, (JObject) await api.DoRequestAsync("POST", GetBaseApiPath() + "/relative_scheduled", options));
     }
 
     /**
@@ -174,7 +212,7 @@ public class Project : Entity
     }
 
     /**
-        Queries phones within the given project.
+        Queries basic routes within the given project.
     */
     public APICursor<Phone> QueryPhones(JObject options = null)
     {
@@ -182,7 +220,7 @@ public class Project : Entity
     }
 
     /**
-        Retrieves the phone with the given ID.
+        Retrieves the basic route with the given ID.
     */
     public async Task<Phone> GetPhoneByIdAsync(string id)
     {
@@ -190,7 +228,7 @@ public class Project : Entity
     }
 
     /**
-        Initializes the phone with the given ID without making an API request.
+        Initializes the basic route with the given ID without making an API request.
     */
     public Phone InitPhoneById(string id)
     {
@@ -401,6 +439,14 @@ public class Project : Entity
     }
 
     /**
+        Queries relative scheduled messages within the given project.
+    */
+    public APICursor<RelativeScheduledMessage> QueryRelativeScheduledMessages(JObject options = null)
+    {
+        return api.NewCursor<RelativeScheduledMessage>(GetBaseApiPath() + "/relative_scheduled", options);
+    }
+
+    /**
         Retrieves the scheduled message with the given ID.
     */
     public async Task<ScheduledMessage> GetScheduledMessageByIdAsync(string id)
@@ -414,6 +460,40 @@ public class Project : Entity
     public ScheduledMessage InitScheduledMessageById(string id)
     {
         return new ScheduledMessage(api, Util.Options("project_id", Get("id"), "id", id), false);
+    }
+
+    /**
+        Retrieves the scheduled message with the given ID.
+    */
+    public async Task<RelativeScheduledMessage> GetRelativeScheduledMessageByIdAsync(string id)
+    {
+        return new RelativeScheduledMessage(api, (JObject) await api.DoRequestAsync("GET", GetBaseApiPath() + "/relative_scheduled/" + id));
+    }
+
+    /**
+        Initializes the relative scheduled message with the given ID without making an API request.
+    */
+    public RelativeScheduledMessage InitRelativeScheduledMessageById(string id)
+    {
+        return new RelativeScheduledMessage(api, Util.Options("project_id", Get("id"), "id", id), false);
+    }
+
+    /**
+        Creates a new automated service.
+        
+        Only certain types of automated services can be created via the API.
+        Other types of services can only be created via the web app.
+        
+        Although Custom Actions services cannot be created directly via the
+        API, they may be converted to a template,
+        and then instances of the template can be created via this method
+        with `service_type`=`custom_template_instance`. Converting a service
+        to a template requires the Service Templates feature to be enabled
+        for the organization.
+    */
+    public async Task<Service> CreateServiceAsync(JObject options)
+    {
+        return new Service(api, (JObject) await api.DoRequestAsync("POST", GetBaseApiPath() + "/services", options));
     }
 
     /**
@@ -438,6 +518,17 @@ public class Project : Entity
     public Service InitServiceById(string id)
     {
         return new Service(api, Util.Options("project_id", Get("id"), "id", id), false);
+    }
+
+    /**
+        Queries service log entries associated with this project.
+        
+        Note: Service logs are automatically deleted and no longer available
+        via the API after approximately one month.
+    */
+    public APICursor<JObject> QueryServiceLogs(JObject options = null)
+    {
+        return api.NewCursor<JObject>(GetBaseApiPath() + "/service_logs", options);
     }
 
     /**
@@ -499,6 +590,54 @@ public class Project : Entity
     }
 
     /**
+        Gets a list of all custom fields defined for contacts in this project. The return value is
+        an array of objects with the properties 'name', 'variable', 'type', 'order', 'readonly', and
+        'lookup_key'. (Fields are automatically created any time a Contact's 'vars' property is
+        updated.)
+    */
+    public async Task<JArray> GetContactFieldsAsync()
+    {
+        return (JArray) await api.DoRequestAsync("GET", GetBaseApiPath() + "/contact_fields");
+    }
+
+    /**
+        Allows customizing how a custom contact field is displayed in the Telerivet web app.
+    */
+    public async Task<JObject> SetContactFieldMetadataAsync(string variable, JObject options)
+    {
+        return (JObject) await api.DoRequestAsync("POST", GetBaseApiPath() + "/contact_fields/" + variable, options);
+    }
+
+    /**
+        Gets a list of all custom fields defined for messages in this project. The return value is
+        an array of objects with the properties 'name', 'variable', 'type', 'order', 'readonly', and
+        'lookup_key'. (Fields are automatically created any time a Contact's 'vars' property is
+        updated.)
+    */
+    public async Task<JArray> GetMessageFieldsAsync()
+    {
+        return (JArray) await api.DoRequestAsync("GET", GetBaseApiPath() + "/message_fields");
+    }
+
+    /**
+        Allows customizing how a custom message field is displayed in the Telerivet web app.
+    */
+    public async Task<JObject> SetMessageFieldMetadataAsync(string variable, JObject options)
+    {
+        return (JObject) await api.DoRequestAsync("POST", GetBaseApiPath() + "/message_fields/" + variable, options);
+    }
+
+    /**
+        Retrieves statistics about messages sent or received via Telerivet. This endpoint returns
+        historical data that is computed shortly after midnight each day in the project's time zone,
+        and does not contain message statistics for the current day.
+    */
+    public async Task<JObject> GetMessageStatsAsync(JObject options)
+    {
+        return (JObject) await api.DoRequestAsync("GET", GetBaseApiPath() + "/message_stats", options);
+    }
+
+    /**
         Saves any fields or custom variables that have changed for the project.
     */
     public override async Task SaveAsync()
@@ -513,27 +652,53 @@ public class Project : Entity
       }
     }
 
-    public String Name
+    public string Name
     {
       get {
-          return (String) Get("name");
+          return (string) Get("name");
       }
       set {
           Set("name", value);
       }
     }
 
-    public String TimezoneId
+    public string TimezoneId
     {
       get {
-          return (String) Get("timezone_id");
+          return (string) Get("timezone_id");
+      }
+      set {
+          Set("timezone_id", value);
       }
     }
 
-    public String UrlSlug
+    public string UrlSlug
     {
       get {
-          return (String) Get("url_slug");
+          return (string) Get("url_slug");
+      }
+      set {
+          Set("url_slug", value);
+      }
+    }
+
+    public string DefaultRouteId
+    {
+      get {
+          return (string) Get("default_route_id");
+      }
+      set {
+          Set("default_route_id", value);
+      }
+    }
+
+    public bool AutoCreateContacts
+    {
+      get {
+          return (bool) Get("auto_create_contacts");
+      }
+      set {
+          Set("auto_create_contacts", value);
       }
     }
 

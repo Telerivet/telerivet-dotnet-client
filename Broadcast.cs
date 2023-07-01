@@ -82,7 +82,7 @@ namespace Telerivet.Client
       
       - message_type
           * Type of message sent from this broadcast
-          * Allowed values: sms, mms, ussd, call, service
+          * Allowed values: sms, mms, ussd, ussd_session, call, chat, service
           * Read-only
       
       - content (string)
@@ -104,7 +104,7 @@ namespace Telerivet.Client
           * Allowed values: female, male
           * Read-only
       
-      - is_template (bool)
+      - replace_variables (bool)
           * Set to true if Telerivet will render variables like [[contact.name]] in the message
               content, false otherwise
           * Read-only
@@ -149,6 +149,13 @@ namespace Telerivet.Client
       
       - vars (JObject)
           * Custom variables stored for this broadcast
+          * Read-only
+      
+      - route_params (JObject)
+          * Route-specific parameters for the messages in the broadcast. The parameters object
+              may have keys matching the `phone_type` field of a phone (basic route) that may be
+              used to send messages in this broadcast. The corresponding value is an object with
+              route-specific parameters to use when sending messages with that type of route.
           * Read-only
       
       - price (number)
@@ -214,10 +221,10 @@ public class Broadcast : Entity
       }
     }
 
-    public String Title
+    public string Title
     {
       get {
-          return (String) Get("title");
+          return (string) Get("title");
       }
     }
 
@@ -263,10 +270,10 @@ public class Broadcast : Entity
       }
     }
 
-    public String MessageType
+    public string MessageType
     {
       get {
-          return (String) Get("message_type");
+          return (string) Get("message_type");
       }
     }
 
@@ -277,45 +284,45 @@ public class Broadcast : Entity
       }
     }
 
-    public String AudioUrl
+    public string AudioUrl
     {
       get {
-          return (String) Get("audio_url");
+          return (string) Get("audio_url");
       }
     }
 
-    public String TtsLang
+    public string TtsLang
     {
       get {
-          return (String) Get("tts_lang");
+          return (string) Get("tts_lang");
       }
     }
 
-    public String TtsVoice
+    public string TtsVoice
     {
       get {
-          return (String) Get("tts_voice");
+          return (string) Get("tts_voice");
       }
     }
 
-    public bool IsTemplate
+    public bool ReplaceVariables
     {
       get {
-          return (bool) Get("is_template");
+          return (bool) Get("replace_variables");
       }
     }
 
-    public String Status
+    public string Status
     {
       get {
-          return (String) Get("status");
+          return (string) Get("status");
       }
     }
 
-    public String Source
+    public string Source
     {
       get {
-          return (String) Get("source");
+          return (string) Get("source");
       }
     }
 
@@ -326,10 +333,10 @@ public class Broadcast : Entity
       }
     }
 
-    public String TrackClicks
+    public string TrackClicks
     {
       get {
-          return (String) Get("track_clicks");
+          return (string) Get("track_clicks");
       }
     }
 
@@ -354,6 +361,13 @@ public class Broadcast : Entity
       }
     }
 
+    public JObject RouteParams
+    {
+      get {
+          return (JObject) Get("route_params");
+      }
+    }
+
     public double? Price
     {
       get {
@@ -361,10 +375,10 @@ public class Broadcast : Entity
       }
     }
 
-    public String PriceCurrency
+    public string PriceCurrency
     {
       get {
-          return (String) Get("price_currency");
+          return (string) Get("price_currency");
       }
     }
 
@@ -403,10 +417,10 @@ public class Broadcast : Entity
       }
     }
 
-    public String ProjectId
+    public string ProjectId
     {
       get {
-          return (String) Get("project_id");
+          return (string) Get("project_id");
       }
     }
 

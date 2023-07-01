@@ -9,7 +9,7 @@ using System.Reflection;
 
 namespace Telerivet.Client
 {
-    public class APICursor<T> where T : Entity
+    public class APICursor<T> where T : class
     {
         private int? limit = null;
         private String nextMarker;
@@ -41,7 +41,9 @@ namespace Telerivet.Client
             this.path = path;
             this.parameters = parameters;
 
-            this.ctor = typeof(T).GetConstructor(new Type[] {
+            System.Type type = typeof(T);
+
+            this.ctor = type == typeof(JObject) ? null : type.GetConstructor(new Type[] {
                 typeof(TelerivetAPI),
                 typeof(JObject),
                 typeof(bool)
@@ -101,7 +103,11 @@ namespace Telerivet.Client
                 pos += 1;
                 offset += 1;
 
-                return (T)ctor.Invoke(new object[] { api, itemData, true });
+                if (ctor != null) {
+                    return (T)ctor.Invoke(new object[] { api, itemData, true });
+                } else {
+                    return (T)(object)itemData;
+                }
             }
             else
             {
@@ -117,7 +123,6 @@ namespace Telerivet.Client
             {
                 requestParams["marker"] = nextMarker;
             }
-
 
             if (limit != null && requestParams["page_size"] == null)
             {

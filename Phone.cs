@@ -9,7 +9,8 @@ using Newtonsoft.Json.Linq;
 namespace Telerivet.Client
 {
 /**
-    Represents a phone or gateway that you use to send/receive messages via Telerivet.
+    Represents a basic route (i.e. a phone or gateway) that you use to send/receive messages via
+    Telerivet.
     
     Basic Routes were formerly referred to as "Phones" within Telerivet. API
     methods, parameters, and properties related to Basic Routes continue to use the term "Phone"
@@ -80,15 +81,16 @@ namespace Telerivet.Client
       
       - android_sdk (int)
           * Android SDK level, indicating the approximate version of the Android OS installed on
-              this phone; see
-              <http://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels>
+              this phone; see [list of Android SDK
+              levels](http://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels)
               (only present for Android phones)
           * Read-only
       
       - mccmnc
           * Code indicating the Android phone's current country (MCC) and mobile network
-              operator (MNC); see <http://en.wikipedia.org/wiki/Mobile_country_code> (only present
-              for Android phones). Note this is a string containing numeric digits, not an integer.
+              operator (MNC); see [Mobile country code Wikipedia
+              article](https://en.wikipedia.org/wiki/Mobile_country_code) (only present for Android
+              phones). Note this is a string containing numeric digits, not an integer.
           * Read-only
       
       - manufacturer
@@ -109,7 +111,7 @@ namespace Telerivet.Client
 public class Phone : Entity
 {
     /**
-        Queries messages sent or received by this phone.
+        Queries messages sent or received by this basic route.
     */
     public APICursor<Message> QueryMessages(JObject options = null)
     {
@@ -117,7 +119,7 @@ public class Phone : Entity
     }
 
     /**
-        Saves any fields or custom variables that have changed for this phone.
+        Saves any fields or custom variables that have changed for this basic route.
     */
     public override async Task SaveAsync()
     {
@@ -131,10 +133,10 @@ public class Phone : Entity
       }
     }
 
-    public String Name
+    public string Name
     {
       get {
-          return (String) Get("name");
+          return (string) Get("name");
       }
       set {
           Set("name", value);
@@ -151,17 +153,17 @@ public class Phone : Entity
       }
     }
 
-    public String PhoneType
+    public string PhoneType
     {
       get {
-          return (String) Get("phone_type");
+          return (string) Get("phone_type");
       }
     }
 
-    public String Country
+    public string Country
     {
       get {
-          return (String) Get("country");
+          return (string) Get("country");
       }
     }
 
@@ -189,10 +191,10 @@ public class Phone : Entity
       }
     }
 
-    public String ProjectId
+    public string ProjectId
     {
       get {
-          return (String) Get("project_id");
+          return (string) Get("project_id");
       }
     }
 
@@ -210,17 +212,17 @@ public class Phone : Entity
       }
     }
 
-    public String InternetType
+    public string InternetType
     {
       get {
-          return (String) Get("internet_type");
+          return (string) Get("internet_type");
       }
     }
 
-    public String AppVersion
+    public string AppVersion
     {
       get {
-          return (String) Get("app_version");
+          return (string) Get("app_version");
       }
     }
 
@@ -231,24 +233,24 @@ public class Phone : Entity
       }
     }
 
-    public String Mccmnc
+    public string Mccmnc
     {
       get {
-          return (String) Get("mccmnc");
+          return (string) Get("mccmnc");
       }
     }
 
-    public String Manufacturer
+    public string Manufacturer
     {
       get {
-          return (String) Get("manufacturer");
+          return (string) Get("manufacturer");
       }
     }
 
-    public String Model
+    public string Model
     {
       get {
-          return (String) Get("model");
+          return (string) Get("model");
       }
     }
 
