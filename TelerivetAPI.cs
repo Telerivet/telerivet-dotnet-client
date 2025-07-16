@@ -16,7 +16,7 @@ namespace Telerivet.Client
 
 public class TelerivetAPI : IDisposable
 {
-    public static String ClientVersion = "1.7.1";
+    public static String ClientVersion = "1.8.0";
 
     private int numRequests = 0;
 
@@ -241,13 +241,17 @@ public class TelerivetAPI : IDisposable
 
         string responseString = await httpResponse.Content.ReadAsStringAsync();
 
-        object responseObj = JsonConvert.DeserializeObject(responseString);
-
-        if (httpResponse.StatusCode == System.Net.HttpStatusCode.OK)
+        object responseObj;
+        try
         {
-            return responseObj;
+            responseObj = JsonConvert.DeserializeObject(responseString);
         }
-        else if (responseObj is JObject && ((JObject)responseObj)["error"] != null)
+        catch (JsonException ex)
+        {
+            throw new TelerivetAPIException("Unexpected response from Telerivet API (HTTP " + ((int)httpResponse.StatusCode) + "): " + responseString, null);
+        }
+
+        if (responseObj is JObject && ((JObject)responseObj)["error"] != null)
         {
             JObject error = (JObject)((JObject)responseObj)["error"];
 
@@ -256,7 +260,7 @@ public class TelerivetAPI : IDisposable
 
             if (code == "invalid_param")
             {
-                throw new TelerivetInvalidParameterException(message, code);
+                throw new TelerivetInvalidParameterException(message, code, (String)error["param"]);
             }
             else if (code == "not_found")
             {
@@ -269,7 +273,7 @@ public class TelerivetAPI : IDisposable
         }
         else
         {
-            throw new TelerivetAPIException("Telerivet API error (HTTP " + httpResponse.StatusCode + ")");
+            return responseObj;
         }
     }
 
@@ -319,7 +323,20 @@ public class TelerivetAPIException : Exception
 
 public class TelerivetInvalidParameterException : TelerivetAPIException
 {
-    public TelerivetInvalidParameterException(String message, String code = null) : base(message, code) { }
+    protected String param;
+
+    public TelerivetInvalidParameterException(String message, String code = null, String param = null) : base(message, code)
+    {
+        this.param = param;
+    }
+
+    public String Param
+    {
+        get
+        {
+            return param;
+        }
+    }
 }
 
 public class TelerivetNotFoundException : TelerivetAPIException

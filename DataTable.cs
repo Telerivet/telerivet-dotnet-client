@@ -38,7 +38,8 @@ namespace Telerivet.Client
           * Updatable via API
       
       - show_stats (bool)
-          * Whether to show row statistics in the web app
+          * Whether to show summary charts (pie charts, bar charts, tables of top values) for
+              this data table in the web app
           * Updatable via API
       
       - show_contact_columns (bool)
@@ -46,7 +47,12 @@ namespace Telerivet.Client
           * Updatable via API
       
       - vars (JObject)
-          * Custom variables stored for this data table
+          * Custom variables stored for this data table. Variable names may be up to 32
+              characters in length and can contain the characters a-z, A-Z, 0-9, and _.
+              Values may be strings, numbers, or boolean (true/false).
+              String values may be up to 4096 bytes in length when encoded as UTF-8.
+              Up to 100 variables are supported per object.
+              Setting a variable to null will delete the variable.
           * Updatable via API
       
       - project_id
@@ -101,6 +107,9 @@ public class DataTable : Entity
 
     /**
         Allows customizing how a field (column) is displayed in the Telerivet web app.
+        
+        The variable path parameter can contain the characters a-z, A-Z,
+        0-9, and _, and may be up to 32 characters in length.
     */
     public async Task<JObject> SetFieldMetadataAsync(string variable, JObject options)
     {
